@@ -1,22 +1,26 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import escapeRegExp from 'escape-string-regexp'
 
 class ShelfBooks extends Component {
   static propTypes = {
-    books: PropTypes.array.isRequired
+    books: PropTypes.array.isRequired,
+    shelf: PropTypes.string.isRequired,
+    onUpdateBook: PropTypes.func.isRequired
   }
 
   state = {
-    shelf: ''
+    query: ''
   }
 
   render() {
-    const { books } = this.props
-    const { shelf } = this.state
+    const { books, shelf, onUpdateBook } = this.props
+    const { query } = this.state
 
     let showingBooks
     if (shelf) {
-
+      const match = new RegExp(escapeRegExp(shelf))
+      showingBooks = books.filter((book) => match.test(book.shelf))
     } else {
       showingBooks = books
     }
@@ -25,12 +29,15 @@ class ShelfBooks extends Component {
       <div className="bookshelf-books">
         <ol className="books-grid">
           {showingBooks.map((book) => (
-            <li>
+            <li key={book.id} className='book-item'>
               <div className="book">
                 <div className="book-top">
                   <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.thumbnail})` }}></div>
                   <div className="book-shelf-changer">
-                    <select>
+                    <select
+                      value={shelf}
+                      onChange={(event) => onUpdateBook(book, event.target.value)}
+                    >
                       <option value="move" disabled>Move to...</option>
                       <option value="currentlyReading">Currently Reading</option>
                       <option value="wantToRead">Want to Read</option>
@@ -51,25 +58,3 @@ class ShelfBooks extends Component {
 }
 
 export default ShelfBooks
-
-
-/**
-            <li>
-              <div className="book">
-                <div className="book-top">
-                  <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url("http://books.google.com/books/content?id=uu1mC6zWNTwC&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE73pGHfBNSsJG9Y8kRBpmLUft9O4BfItHioHolWNKOdLavw-SLcXADy3CPAfJ0_qMb18RmCa7Ds1cTdpM3dxAGJs8zfCfm8c6ggBIjzKT7XR5FIB53HHOhnsT7a0Cc-PpneWq9zX&source=gbs_api")' }}></div>
-                  <div className="book-shelf-changer">
-                    <select>
-                      <option value="move" disabled>Move to...</option>
-                      <option value="currentlyReading">Currently Reading</option>
-                      <option value="wantToRead">Want to Read</option>
-                      <option value="read">Read</option>
-                      <option value="none">None</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="book-title">1776</div>
-                <div className="book-authors">David McCullough</div>
-              </div>
-            </li>
-**/
