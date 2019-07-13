@@ -2,6 +2,7 @@ import React from 'react'
 // import * as BooksAPI from './BooksAPI'
 import './App.css'
 import ShelfBooks from './ShelfBooks'
+import * as BooksAPI from './utils/BooksAPI'
 
 class BooksApp extends React.Component {
   state = {
@@ -11,69 +12,14 @@ class BooksApp extends React.Component {
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    books: [
-      {
-        id: 'nggnmAEACAAJ',
-        title: 'The Linux Command Line',
-        subtitle: 'The Linux Command Line',
-        authors: [
-          'William E. Shotts, Jr.'
-        ],
-        thumbnail: 'http://books.google.com/books/content?id=nggnmAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
-        shelf: 'currentlyReading'
-      },
-      {
-        id: 'evuwdDLfAyYC',
-        title: 'TThe Cuckoos Calling',
-        subtitle: 'The Cuckoos Calling',
-        authors: [
-          'Robert Galbraith'
-        ],
-        thumbnail: 'http://books.google.com/books/content?id=evuwdDLfAyYC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
-        shelf: 'currentlyReading'
-      },
-      {
-        id: '74XNzF_al3MC',
-        title: 'Lords of Finance',
-        subtitle: 'The Bankers Who Broke the World',
-        authors: [
-          'Liaquat Ahamed'
-        ],
-        thumbnail: 'http://books.google.com/books/content?id=74XNzF_al3MC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
-        shelf: 'wantToRead'
-      },
-      {
-        id: 'jAUODAAAQBAJ',
-        title: 'Needful Things',
-        subtitle: 'Needful Things',
-        authors: [
-          'Stephen King'
-        ],
-        thumbnail: 'http://books.google.com/books/content?id=jAUODAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
-        shelf: 'wantToRead'
-      },
-      {
-        id: '1wy49i-gQjIC',
-        title: 'Satire TV',
-        subtitle: 'Politics and Comedy in the Post-Network Era',
-        authors: [
-          'Jonathan Gray'
-        ],
-        thumbnail: 'http://books.google.com/books/content?id=1wy49i-gQjIC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
-        shelf: 'read'
-      },
-      {
-        id: 'IOejDAAAQBAJ',
-        title: 'React',
-        subtitle: 'Die praktische Einführung in React, React Router und Redux',
-        authors: [
-          'Nils Hartmann'
-        ],
-        thumbnail: 'http://books.google.com/books/content?id=IOejDAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
-        shelf: 'read'
-      }
-    ],
+    books: [],
     showSearchPage: false
+  }
+
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+      this.setState({ books }) //shortcut for books:books
+    })
   }
 
   updateBook = (book, shelf) => {
@@ -85,6 +31,9 @@ class BooksApp extends React.Component {
     ))
     console.log('updateBook: newState: ', newState);
     this.setState({ books: newState })
+
+    // update the backend database
+    BooksAPI.update(book, shelf)
   }
 
   render() {
